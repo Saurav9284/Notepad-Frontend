@@ -1,10 +1,12 @@
 import React from "react";
-import { MenuItem, Menu ,MenuMenu,Input} from "semantic-ui-react";
+import { MenuItem, Menu} from "semantic-ui-react";
 import { styled } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
 import Badge from "@mui/material/Badge";
 import Avatar from "@mui/material/Avatar";
 import notebook from "../Assests/notebook.png";
-import avatar from '../Assests/avatar.png'
+import avatar from '../Assests/avatar.png';
+import {useToast} from '@chakra-ui/react'
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -36,6 +38,21 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }));
 
 const Navbar = () => {
+
+  const navigate = useNavigate();
+  const toast = useToast();
+
+  const logout = () => {
+    sessionStorage.removeItem('Token');
+    toast({
+            position: "top",
+            title: 'Logout successfull !!',
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+    })
+    navigate('/login')
+  }
   return (
     <div className="navbar">
       <Menu borderless className="navbar">
@@ -67,7 +84,7 @@ const Navbar = () => {
           </StyledBadge>
         </MenuItem>
 
-        <MenuItem name="logout" className="menuitem" />
+        <MenuItem name="logout" className="menuitem" onClick={logout}/>
       </Menu>
     </div>
   );
