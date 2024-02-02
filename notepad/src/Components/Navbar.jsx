@@ -37,7 +37,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 const Navbar = () => {
   return (
-    <div>
+    <div className="navbar">
       <Menu borderless className="navbar">
         <MenuItem className="logoDiv">
         <img
