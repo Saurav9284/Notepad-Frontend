@@ -24,10 +24,6 @@
   color: transparent;
 }
 
-.signupmain{
-    margin-top: -90px!important;
-}
-
 .button{
   background: linear-gradient(to right, #f7544b, #531b7e)!important;
   -webkit-background-clip: text;
