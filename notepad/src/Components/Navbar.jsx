@@ -1,15 +1,13 @@
-import React ,{useState}from "react";
-import { MenuItem, Menu,Popup,Button} from "semantic-ui-react";
+import React, { useState } from "react";
+import { MenuItem, Menu, Popup, Button } from "semantic-ui-react";
 import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import Badge from "@mui/material/Badge";
 import Avatar from "@mui/material/Avatar";
 import notebook from "../Assests/notebook.png";
-import avatar from '../Assests/avatar.png';
-import {useToast} from '@chakra-ui/react';
-import {
-  Modal,
-} from 'semantic-ui-react'
+import avatar from "../Assests/avatar.png";
+import { useToast } from "@chakra-ui/react";
+import { Modal } from "semantic-ui-react";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -41,10 +39,9 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }));
 
 const Navbar = () => {
-
   const gohome = () => {
-    navigate('/')
-  }
+    navigate("/");
+  };
 
   const [open, setOpen] = useState(false);
 
@@ -59,22 +56,22 @@ const Navbar = () => {
   const navigate = useNavigate();
   const toast = useToast();
 
-  const token = sessionStorage.getItem('Token');
-  const name = sessionStorage.getItem('Name');
+  const token = sessionStorage.getItem("Token");
+  const name = sessionStorage.getItem("Name");
 
   const logout = () => {
-    sessionStorage.removeItem('Token');
-    sessionStorage.removeItem('Name');
+    sessionStorage.removeItem("Token");
+    sessionStorage.removeItem("Name");
     setOpen(false);
     toast({
-            position: "top",
-            title: 'Logout successfull 🙁',
-            status: "info",
-            duration: 5000,
-            isClosable: true,
-    })
-    navigate('/login')
-  }
+      position: "top",
+      title: "Logout successfull 🙁",
+      status: "info",
+      duration: 5000,
+      isClosable: true,
+    });
+    navigate("/login");
+  };
   return (
     <div className="navbar">
       <Menu borderless className="navbar">
@@ -85,54 +82,55 @@ const Navbar = () => {
             alt="logo"
             style={{ width: 80, cursor: "pointer" }}
           />
-          <h1>N<span>otes</span></h1>
+          <h1>
+            N<span>otes</span>
+          </h1>
         </MenuItem>
         {token ? (
           <>
             <MenuItem className="menuitem" position="right">
-            <Popup content={`Welcome! ${name}`} trigger={<StyledBadge
-                overlap="circular"
-                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                variant="dot"
-                className="menuitem"
-              >
-                <Avatar
-                  alt="user"
-                  src={avatar}
-                />
-              </StyledBadge>} />
-            </MenuItem>
-            
-            
-            <>
-    
-           <MenuItem name="logout" className="menuitem" >
-            <Button onClick={openModal}>Logout</Button>
+              <Popup
+                content={`Welcome! ${name}`}
+                trigger={
+                  <StyledBadge
+                    overlap="circular"
+                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                    variant="dot"
+                    className="menuitem"
+                  >
+                    <Avatar alt="user" src={avatar} />
+                  </StyledBadge>
+                }
+              />
             </MenuItem>
 
-      <Modal size="tiny" open={open} onClose={closeModal}>
-        <Modal.Header>Logout from account</Modal.Header>
-        <Modal.Content>
-          <p>Are you sure? you cant access the notes if logout</p>
-        </Modal.Content>
-        <Modal.Actions>
-          <Button negative onClick={closeModal}>
-            No
-          </Button>
-          <Button positive onClick={logout}>
-            Yes
-          </Button>
-        </Modal.Actions>
-      </Modal>
-    </>
-            
+            <>
+              <MenuItem name="logout" className="menuitem">
+                <Button onClick={openModal}>Logout</Button>
+              </MenuItem>
+
+              <Modal size="tiny" open={open} onClose={closeModal}>
+                <Modal.Header>Logout from account 😬</Modal.Header>
+                <Modal.Content>
+                  <p>Are you sure? you cant access the notes if you logout</p>
+                </Modal.Content>
+                <Modal.Actions>
+                  <Button negative onClick={closeModal}>
+                    No
+                  </Button>
+                  <Button positive onClick={logout}>
+                    Yes
+                  </Button>
+                </Modal.Actions>
+              </Modal>
+            </>
           </>
         ) : (
           <>
-          <MenuItem name="login" className="menuitem" position='right' >
-          <Button onClick={() => navigate('/login')}>Login</Button>
-          </MenuItem>
-        </>
+            <MenuItem name="login" className="menuitem" position="right">
+              <Button onClick={() => navigate("/login")}>Login</Button>
+            </MenuItem>
+          </>
         )}
       </Menu>
     </div>
