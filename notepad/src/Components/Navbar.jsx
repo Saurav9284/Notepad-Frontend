@@ -1,5 +1,5 @@
 import React from "react";
-import { MenuItem, Menu} from "semantic-ui-react";
+import { MenuItem, Menu,Popup,Button} from "semantic-ui-react";
 import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import Badge from "@mui/material/Badge";
@@ -41,9 +41,12 @@ const Navbar = () => {
 
   const navigate = useNavigate();
   const toast = useToast();
+  const token = sessionStorage.getItem('Token');
+  const name = sessionStorage.getItem('Name');
 
   const logout = () => {
     sessionStorage.removeItem('Token');
+    sessionStorage.removeItem('Name');
     toast({
             position: "top",
             title: 'Logout successfull !!',
@@ -57,7 +60,7 @@ const Navbar = () => {
     <div className="navbar">
       <Menu borderless className="navbar">
         <MenuItem className="logoDiv">
-        <img
+          <img
             className="logo"
             src={notebook}
             alt="logo"
@@ -65,26 +68,35 @@ const Navbar = () => {
           />
           <h1>N<span>otes</span></h1>
         </MenuItem>
-        {/* <MenuMenu position='right'>
-          <MenuItem>
-            <Input icon='search' placeholder='Search...' />
+        {token ? (
+          <>
+            <MenuItem className="menuitem" position="right">
+            <Popup content={`Welcome! ${name}`} trigger={<StyledBadge
+                overlap="circular"
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                variant="dot"
+                className="menuitem"
+              >
+                <Avatar
+                  alt="user"
+                  src={avatar}
+                />
+              </StyledBadge>} />
+            </MenuItem>
+            <MenuItem name="logout" className="menuitem" >
+            <Button onClick={logout}>Logout</Button>
+            </MenuItem>
+          </>
+        ) : (
+          <>
+          <MenuItem name="login" className="menuitem" position='right' >
+          <Button onClick={() => navigate('/login')}>Login</Button>
           </MenuItem>
-          </MenuMenu> */}
-        <MenuItem className="menuitem" position="right">
-          <StyledBadge
-            overlap="circular"
-            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-            variant="dot"
-            className="menuitem"
-          >
-            <Avatar
-              alt="user"
-              src={avatar}
-            />
-          </StyledBadge>
-        </MenuItem>
-
-        <MenuItem name="logout" className="menuitem" onClick={logout}/>
+          <MenuItem name="signup" className="menuitem"  >
+          <Button onClick={() => navigate('/signup')}>Signup</Button>
+          </MenuItem>
+        </>
+        )}
       </Menu>
     </div>
   );

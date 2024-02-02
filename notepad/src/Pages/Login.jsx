@@ -30,7 +30,9 @@ const Login = () => {
       .then((res) => {
         if (res.msg === "login succcessful") {
           const token = res.userData.token;
+          const name = res.userData.name;
           sessionStorage.setItem("Token", token);
+          sessionStorage.setItem("Name", name);
           toast({
             position: "top",
             title: res.msg,
