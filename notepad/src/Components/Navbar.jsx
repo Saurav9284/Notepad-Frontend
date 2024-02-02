@@ -45,7 +45,6 @@ const Navbar = () => {
             src={notebook}
             alt="logo"
             style={{ width: 80, cursor: "pointer" }}
-            
           />
           <h1>N<span>otes</span></h1>
         </MenuItem>

@@ -9,12 +9,13 @@
   color: rgb(92, 86, 86) !important;
 }
 
-/* .logo {
-  margin-left: 5% !important;
-} */
+.logo {
+  width: 50px!important;
+}
 
 .logoDiv > h1 {
   color: rgb(93, 175, 230);
+  margin: 8px;
 }
 
 .logoDiv > h1 > span {
