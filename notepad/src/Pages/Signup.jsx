@@ -1,9 +1,66 @@
-
+import {useToast} from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Button, Form, Grid, Header, Image, Message, Segment,Dropdown } from 'semantic-ui-react'
+import { Button, Form, Grid, Header,Message, Segment,Dropdown } from 'semantic-ui-react'
 
 const Signup = () => {
+
+
+  const [name,setName] = useState("");
+  const [email,setEmail] = useState("");
+  const [country,setCountry] = useState("");
+  const [password,setPassword] = useState('');
+
+  const navigate = useNavigate();
+  const toast = useToast();
+
+  const handlesubmit = () => {
+    // console.log(name)
+    // console.log(email)
+    // console.log(country)
+    // console.log(password)
+    const payload = JSON.stringify({ name,country,email, password });
+    fetch("https://panicky-spacesuit-colt.cyclic.app/user/signup", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: payload,
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.msg === 'User Created!!') {
+          toast({
+            position: "top",
+            title: res.msg,
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          });
+          navigate("/login");
+        } else {
+          toast({
+            position: "top",
+            title: res.msg || "Signup failed",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+        }
+
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+        toast({
+          position: "top",
+          title: "An error occurred during Signup",
+          status: "warning",
+          duration: 5000,
+          isClosable: true,
+        });
+      });
+  }
     const countryOptions = [
         { key: 'in', value: 'in', text: 'India' },
         { key: 'pk', value: 'pk', text: 'Pakistan' },
@@ -32,47 +89,51 @@ const Signup = () => {
         { key: 'bz', value: 'bz', text: 'Belize' },
       ]
 
-      const navigate = useNavigate();
+      
 
       const login = () => {
         navigate('/login')
       }
 
     return (
-        <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle' className='signupmain'>
-        <Grid.Column style={{ maxWidth: 450 }}>
-          <Header as='h1' textAlign='center' className='formheader'>
-            Create your account
-          </Header>
-          <Form size='large'>
-            <Segment stacked>
-              <Form.Input fluid icon='user' iconPosition='left' placeholder='Enter your name..' />
-              <Form.Input fluid icon='at' iconPosition='left' placeholder='E-mail address' />
-              <Form.Field fluid>
+      <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle' className='signupmain'>
+      <Grid.Column style={{ maxWidth: 450 }}>
+        <Header as='h1' textAlign='center' className='formheader'>
+          Create your account
+        </Header>
+        <Form size='large' onSubmit={handlesubmit}>
+          <Segment stacked>
+            <Form.Input fluid icon='user' iconPosition='left' placeholder='Enter your name..' value={name} onChange={(e) => { setName(e.target.value) }} />
+            <Form.Input fluid icon='at' iconPosition='left' placeholder='E-mail address' value={email} onChange={(e) => { setEmail(e.target.value) }} />
+            <Form.Field fluid>
               <Dropdown
                 placeholder='Select Country'
                 fluid
                 selection
                 options={countryOptions}
+                value={country}
+                onChange={(e, { value }) => { setCountry(value) }} 
               />
             </Form.Field>
-              <Form.Input
-                fluid
-                icon='lock'
-                iconPosition='left'
-                placeholder='Password'
-                type='password'
-              />
-              <Button fluid size='large' className='button'>
-                Signup
-              </Button>
-            </Segment>
-          </Form>
-          <Message>
-            Already have an account? <a onClick={login}>Login</a>
-          </Message>
-        </Grid.Column>
-      </Grid>
+            <Form.Input
+              fluid
+              icon='lock'
+              iconPosition='left'
+              placeholder='Password'
+              type='password'
+              value={password}
+              onChange={(e) => { setPassword(e.target.value) }}
+            />
+            <Button fluid size='large' className='button' type='submit'>
+              Signup
+            </Button>
+          </Segment>
+        </Form>
+        <Message>
+          Already have an account? <a onClick={login}>Login</a>
+        </Message>
+      </Grid.Column>
+    </Grid>
     )
 }
 
