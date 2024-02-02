@@ -54,7 +54,7 @@ const Signup = () => {
         console.log(err);
         toast({
           position: "top",
-          title: "An error occurred during Signup",
+          title: "An error occurred during Signup ",
           status: "warning",
           duration: 5000,
           isClosable: true,

@@ -1,4 +1,4 @@
-import React from "react";
+import React ,{useState}from "react";
 import { MenuItem, Menu,Popup,Button} from "semantic-ui-react";
 import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
@@ -6,7 +6,10 @@ import Badge from "@mui/material/Badge";
 import Avatar from "@mui/material/Avatar";
 import notebook from "../Assests/notebook.png";
 import avatar from '../Assests/avatar.png';
-import {useToast} from '@chakra-ui/react'
+import {useToast} from '@chakra-ui/react';
+import {
+  Modal,
+} from 'semantic-ui-react'
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -43,6 +46,16 @@ const Navbar = () => {
     navigate('/')
   }
 
+  const [open, setOpen] = useState(false);
+
+  const openModal = () => {
+    setOpen(true);
+  };
+
+  const closeModal = () => {
+    setOpen(false);
+  };
+
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -52,10 +65,11 @@ const Navbar = () => {
   const logout = () => {
     sessionStorage.removeItem('Token');
     sessionStorage.removeItem('Name');
+    setOpen(false);
     toast({
             position: "top",
-            title: 'Logout successfull !!',
-            status: "success",
+            title: 'Logout successfull 🙁',
+            status: "info",
             duration: 5000,
             isClosable: true,
     })
@@ -88,9 +102,30 @@ const Navbar = () => {
                 />
               </StyledBadge>} />
             </MenuItem>
-            <MenuItem name="logout" className="menuitem" >
-            <Button onClick={logout}>Logout</Button>
+            
+            
+            <>
+    
+           <MenuItem name="logout" className="menuitem" >
+            <Button onClick={openModal}>Logout</Button>
             </MenuItem>
+
+      <Modal size="tiny" open={open} onClose={closeModal}>
+        <Modal.Header>Logout from account</Modal.Header>
+        <Modal.Content>
+          <p>Are you sure? you cant access the notes if logout</p>
+        </Modal.Content>
+        <Modal.Actions>
+          <Button negative onClick={closeModal}>
+            No
+          </Button>
+          <Button positive onClick={logout}>
+            Yes
+          </Button>
+        </Modal.Actions>
+      </Modal>
+    </>
+            
           </>
         ) : (
           <>
