@@ -12,7 +12,7 @@ const Login = () => {
   return (
     <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle' className='signupmain'>
         <Grid.Column style={{ maxWidth: 450 }}>
-          <Header as='h2' color='teal' textAlign='center'>
+          <Header as='h1' textAlign='center' className='formheader'>
             Log-in to your account
           </Header>
           <Form size='large'>
@@ -26,7 +26,7 @@ const Login = () => {
                 type='password'
               />
     
-              <Button color='teal' fluid size='large'>
+              <Button className='button' fluid size='large'>
                 Login
               </Button>
             </Segment>

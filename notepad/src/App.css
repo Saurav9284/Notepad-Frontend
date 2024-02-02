@@ -1,27 +1,43 @@
 .navbar {
   background-color: rgb(255, 255, 255) !important;
 }
+
 .menuitem {
   cursor: pointer;
   font-size: large;
   font-weight: bold !important;
   color: rgb(92, 86, 86) !important;
 }
+
 /* .logo {
   margin-left: 5% !important;
 } */
+
 .logoDiv > h1 {
   color: rgb(93, 175, 230);
 }
+
 .logoDiv > h1 > span {
   background: linear-gradient(to right, #f7544b, #531b7e);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
+
 .signupmain{
     margin-top: -90px!important;
 }
+
+.button{
+  background: linear-gradient(to right, #f7544b, #531b7e)!important;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: white!important;
+}
+.formheader{
+  color: #c73d35!important;
+}
+
 
 
 

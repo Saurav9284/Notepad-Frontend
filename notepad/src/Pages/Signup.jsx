@@ -41,7 +41,7 @@ const Signup = () => {
     return (
         <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle' className='signupmain'>
         <Grid.Column style={{ maxWidth: 450 }}>
-          <Header as='h2' color='teal' textAlign='center'>
+          <Header as='h1' textAlign='center' className='formheader'>
             Create your account
           </Header>
           <Form size='large'>
@@ -63,7 +63,7 @@ const Signup = () => {
                 placeholder='Password'
                 type='password'
               />
-              <Button color='teal' fluid size='large'>
+              <Button fluid size='large' className='button'>
                 Signup
               </Button>
             </Segment>
