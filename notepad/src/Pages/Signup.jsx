@@ -62,6 +62,7 @@ const Signup = () => {
       });
   }
     const countryOptions = [
+       { key: '', value: '', text: 'Select Country'},
         { key: 'in', value: 'in', text: 'India' },
         { key: 'pk', value: 'pk', text: 'Pakistan' },
         { key: 'ch', value: 'ch', text: 'China' },
