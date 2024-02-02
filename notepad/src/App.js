@@ -1,12 +1,16 @@
-import './App.css';
-import Footer from './Components/Footer';
-import Navbar from './Components/Navbar';
+import "./App.css";
+import Navbar from "./Components/Navbar";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { ChakraProvider } from "@chakra-ui/react";
+const theme = createTheme();
+
 function App() {
   return (
-    <>
-    <Navbar/>
-    <Footer/>
-    </>
+    <ChakraProvider>
+      <ThemeProvider theme={theme}>
+        <Navbar />
+      </ThemeProvider>
+    </ChakraProvider>
   );
 }
 
