@@ -18,7 +18,6 @@ const HomeHeader = () => {
     <div className="homeOperation">
       <Menu secondary>
         <MenuItem>
-          {" "}
           <Select placeholder="Sort by title" options={sortOptions} />
         </MenuItem>
         <MenuItem>
