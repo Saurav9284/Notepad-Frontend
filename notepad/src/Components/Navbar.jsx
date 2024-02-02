@@ -39,8 +39,13 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 const Navbar = () => {
 
+  const gohome = () => {
+    navigate('/')
+  }
+
   const navigate = useNavigate();
   const toast = useToast();
+
   const token = sessionStorage.getItem('Token');
   const name = sessionStorage.getItem('Name');
 
@@ -59,7 +64,7 @@ const Navbar = () => {
   return (
     <div className="navbar">
       <Menu borderless className="navbar">
-        <MenuItem className="logoDiv">
+        <MenuItem className="logoDiv" onClick={gohome}>
           <img
             className="logo"
             src={notebook}
@@ -91,9 +96,6 @@ const Navbar = () => {
           <>
           <MenuItem name="login" className="menuitem" position='right' >
           <Button onClick={() => navigate('/login')}>Login</Button>
-          </MenuItem>
-          <MenuItem name="signup" className="menuitem"  >
-          <Button onClick={() => navigate('/signup')}>Signup</Button>
           </MenuItem>
         </>
         )}
