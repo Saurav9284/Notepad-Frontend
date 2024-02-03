@@ -1,52 +1,15 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import {
-  Menu,
-  MenuItem,
-  Select,
-  Input,
-  Button,
-  GridColumn,
-  Grid,
-} from "semantic-ui-react";
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  useDisclosure,
-  FormControl,
-  FormLabel,
-  useToast,
-  SimpleGrid,
-  Box,
-} from "@chakra-ui/react";
+import {Menu, MenuItem, Select, Input, Button, GridColumn, Grid,} from "semantic-ui-react";
+import { Modal,ModalOverlay,ModalContent,ModalHeader,ModalFooter,ModalBody,ModalCloseButton,useDisclosure,FormControl,FormLabel,useToast,} from "@chakra-ui/react";
 import axios from "axios";
 import ListCard from "../Components/ListCard";
 
 const Home = () => {
+
   const toast = useToast();
 
-  const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("");
-  const [description, setDescription] = useState("");
-
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
-  const sortOptions = [
-    { key: "", value: "", text: "Select" },
-    { key: "asc", value: "asc", text: "Ascending Order" },
-    { key: "desc", value: "desc", text: "Descending Order" },
-  ];
-
-  const filterOptions = [
-    { key: "", value: "", text: "Select" },
-    { key: "Important", value: "Important", text: "Important Notes" },
-    { key: "Local", value: "Local", text: "Local Notes" },
-  ];
+  // Get Data
 
   const [data, setData] = useState([]);
   const [pages, setPages] = useState("");
@@ -71,7 +34,16 @@ const Home = () => {
     }
   };
 
+  //CreateNote
+
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState("");
+  const [description, setDescription] = useState("");
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const submitadd = () => {
+    // console.log(title,category,description)
     const payload = JSON.stringify({ title, category, description });
     const token = sessionStorage.getItem("Token");
     fetch("https://notepad-backend-production.up.railway.app/note/create", {
@@ -118,6 +90,21 @@ const Home = () => {
       });
   };
 
+ // Options for filter
+
+  const sortOptions = [
+    { key: "", value: "", text: "Select" },
+    { key: "asc", value: "asc", text: "Ascending Order" },
+    { key: "desc", value: "desc", text: "Descending Order" },
+  ];
+
+  const filterOptions = [
+    { key: "", value: "", text: "Select" },
+    { key: "Important", value: "Important", text: "Important Notes" },
+    { key: "Local", value: "Local", text: "Local Notes" },
+  ];
+
+  
   useEffect(() => {
     getData();
   }, []);
@@ -201,13 +188,6 @@ const Home = () => {
           </GridColumn>
         ))}
       </Grid>
-      {/* <SimpleGrid columns={[2, null, 3]} spacing="20px" className="girdcard">
-        {data?.map((data) => (
-          <Box>
-            <ListCard data={data} />
-          </Box>
-        ))}
-      </SimpleGrid> */}
     </div>
   );
 };
