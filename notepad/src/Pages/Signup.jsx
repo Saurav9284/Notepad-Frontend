@@ -20,7 +20,7 @@ const Signup = () => {
     // console.log(country)
     // console.log(password)
     const payload = JSON.stringify({ name,country,email, password });
-    fetch("https://panicky-spacesuit-colt.cyclic.app/user/signup", {
+    fetch("https://notepad-backend-production.up.railway.app/user/signup", {
       method: "POST",
       headers: {
         "content-type": "application/json",

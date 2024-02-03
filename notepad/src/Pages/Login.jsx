@@ -19,7 +19,7 @@ const Login = () => {
 
     const payload = JSON.stringify({ email, password });
 
-    return fetch("https://panicky-spacesuit-colt.cyclic.app/user/login", {
+    return fetch("https://notepad-backend-production.up.railway.app/user/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
