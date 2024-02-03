@@ -115,7 +115,7 @@ const Navbar = () => {
                   <p>Are you sure? you cant access the notes if you logout</p>
                 </Modal.Content>
                 <Modal.Actions>
-                  <Button negative onClick={closeModal}>
+                  <Button basic color="green" onClick={closeModal}>
                     No
                   </Button>
                   <Button positive onClick={logout}>

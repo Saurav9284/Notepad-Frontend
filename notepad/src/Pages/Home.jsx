@@ -1,24 +1,41 @@
-import React from "react";
-import { useState, useEffect } from "react";
-import {Menu, MenuItem, Select, Input, Button, GridColumn, Grid,} from "semantic-ui-react";
-import { Modal,ModalOverlay,ModalContent,ModalHeader,ModalFooter,ModalBody,ModalCloseButton,useDisclosure,FormControl,FormLabel,useToast,} from "@chakra-ui/react";
+import React, { useState, useEffect } from "react";
+import {
+  Menu,
+  MenuItem,
+  Select,
+  Input,
+  Button,
+  GridColumn,
+  Grid,
+} from "semantic-ui-react";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+  FormControl,
+  FormLabel,
+  useToast,
+} from "@chakra-ui/react";
 import axios from "axios";
 import ListCard from "../Components/ListCard";
 
 const Home = () => {
-
   const toast = useToast();
-
-  // Get Data
 
   const [data, setData] = useState([]);
   const [pages, setPages] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const getData = async () => {
+  const getData = async (page = 1) => {
     const token = sessionStorage.getItem("Token");
     try {
       const res = await axios.get(
-        "https://notepad-backend-production.up.railway.app/note/",
+        `https://notepad-backend-production.up.railway.app/note/?page=${page}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -26,15 +43,12 @@ const Home = () => {
           },
         }
       );
-      console.log(res);
       setPages(res.data.totalPages);
       setData(res.data.data);
     } catch (error) {
       console.log(error);
     }
   };
-
-  //CreateNote
 
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
@@ -43,7 +57,6 @@ const Home = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const submitadd = () => {
-    // console.log(title,category,description)
     const payload = JSON.stringify({ title, category, description });
     const token = sessionStorage.getItem("Token");
     fetch("https://notepad-backend-production.up.railway.app/note/create", {
@@ -64,7 +77,7 @@ const Home = () => {
             duration: 5000,
             isClosable: true,
           });
-          getData();
+          getData(currentPage);
           onClose();
         } else {
           toast({
@@ -75,8 +88,6 @@ const Home = () => {
             isClosable: true,
           });
         }
-
-        console.log(res);
       })
       .catch((err) => {
         console.log(err);
@@ -90,8 +101,6 @@ const Home = () => {
       });
   };
 
- // Options for filter
-
   const sortOptions = [
     { key: "", value: "", text: "Select" },
     { key: "asc", value: "asc", text: "Ascending Order" },
@@ -104,10 +113,33 @@ const Home = () => {
     { key: "Local", value: "Local", text: "Local Notes" },
   ];
 
-  
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    getData(pageNumber);
+  };
+
+  const Pagination = () => {
+    const pageNumbers = Array.from({ length: pages }, (_, index) => index + 1);
+
+    return (
+      <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
+        {pageNumbers.map((pageNumber) => (
+          <Button
+            basic
+            key={pageNumber}
+            onClick={() => handlePageChange(pageNumber)}
+            primary={currentPage === pageNumber}
+          >
+            {pageNumber}
+          </Button>
+        ))}
+      </div>
+    );
+  };
+
   useEffect(() => {
     getData();
-  }, []);
+  }, [currentPage]);
 
   return (
     <div className="homeOperation">
@@ -119,7 +151,10 @@ const Home = () => {
           <Input icon="search" placeholder="Search notes..." />
         </MenuItem>
         <MenuItem>
-          <Select placeholder="Filter by category" options={filterOptions} />
+          <Select
+            placeholder="Filter by category"
+            options={filterOptions}
+          />
         </MenuItem>
         <MenuItem>
           <>
@@ -138,9 +173,7 @@ const Home = () => {
                     <Input
                       placeholder="Enter title"
                       value={title}
-                      onChange={(e) => {
-                        setTitle(e.target.value);
-                      }}
+                      onChange={(e) => setTitle(e.target.value)}
                     />
                   </FormControl>
 
@@ -150,9 +183,7 @@ const Home = () => {
                       placeholder="Choose category"
                       options={filterOptions}
                       value={category}
-                      onChange={(e, { value }) => {
-                        setCategory(value);
-                      }}
+                      onChange={(e, { value }) => setCategory(value)}
                     />
                   </FormControl>
                 </ModalBody>
@@ -162,9 +193,7 @@ const Home = () => {
                     <Input
                       placeholder="Enter title"
                       value={description}
-                      onChange={(e) => {
-                        setDescription(e.target.value);
-                      }}
+                      onChange={(e) => setDescription(e.target.value)}
                     />
                   </FormControl>
                 </ModalBody>
@@ -183,11 +212,12 @@ const Home = () => {
       </Menu>
       <Grid columns={4} className="girdcard">
         {data?.map((data) => (
-          <GridColumn>
+          <GridColumn key={data.id}>
             <ListCard data={data} />
           </GridColumn>
         ))}
       </Grid>
+      <Pagination/>
     </div>
   );
 };
