@@ -1,4 +1,14 @@
 import React, { useState, useEffect } from "react";
+import { Card } from "semantic-ui-react";
+import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
+  AlertDialogCloseButton,
+} from "@chakra-ui/react";
 import {
   Menu,
   MenuItem,
@@ -16,13 +26,11 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  useDisclosure,
   FormControl,
   FormLabel,
   useToast,
 } from "@chakra-ui/react";
 import axios from "axios";
-import ListCard from "../Components/ListCard";
 
 const Home = () => {
   const toast = useToast();
@@ -51,10 +59,15 @@ const Home = () => {
   };
 
   const [title, setTitle] = useState("");
+  const [edittitle, setEditTitle] = useState("");
   const [category, setCategory] = useState("");
+  const [editcategory, setEditCategory] = useState("");
   const [description, setDescription] = useState("");
+  const [editdescription, setEditDescription] = useState("");
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isOpen, setIsCreateOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isDEleteOpen, setIsDeleteOpen] = useState(false);
 
   const submitadd = () => {
     const payload = JSON.stringify({ title, category, description });
@@ -78,7 +91,7 @@ const Home = () => {
             isClosable: true,
           });
           getData(currentPage);
-          onClose();
+          setIsCreateOpen(false);
         } else {
           toast({
             position: "top",
@@ -87,6 +100,7 @@ const Home = () => {
             duration: 5000,
             isClosable: true,
           });
+          setIsCreateOpen(false);
         }
       })
       .catch((err) => {
@@ -98,6 +112,7 @@ const Home = () => {
           duration: 5000,
           isClosable: true,
         });
+        setIsCreateOpen(false);
       });
   };
 
@@ -122,7 +137,9 @@ const Home = () => {
     const pageNumbers = Array.from({ length: pages }, (_, index) => index + 1);
 
     return (
-      <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
+      <div
+        style={{ marginTop: "20px", display: "flex", justifyContent: "center" }}
+      >
         {pageNumbers.map((pageNumber) => (
           <Button
             basic
@@ -151,18 +168,15 @@ const Home = () => {
           <Input icon="search" placeholder="Search notes..." />
         </MenuItem>
         <MenuItem>
-          <Select
-            placeholder="Filter by category"
-            options={filterOptions}
-          />
+          <Select placeholder="Filter by category" options={filterOptions} />
         </MenuItem>
         <MenuItem>
           <>
-            <Button basic color="blue" onClick={onOpen}>
+            <Button basic color="blue" onClick={() => setIsCreateOpen(true)}>
               Add
             </Button>
 
-            <Modal isOpen={isOpen} onClose={onClose}>
+            <Modal isOpen={isOpen} onClose={() => setIsCreateOpen(false)}>
               <ModalOverlay />
               <ModalContent>
                 <ModalHeader>Create new note</ModalHeader>
@@ -201,7 +215,11 @@ const Home = () => {
                   <Button mr={3} onClick={submitadd}>
                     Save
                   </Button>
-                  <Button color="red" onClick={onClose} basic>
+                  <Button
+                    color="red"
+                    onClick={() => setIsCreateOpen(false)}
+                    basic
+                  >
                     Cancel
                   </Button>
                 </ModalFooter>
@@ -213,11 +231,129 @@ const Home = () => {
       <Grid columns={4} className="girdcard">
         {data?.map((data) => (
           <GridColumn key={data.id}>
-            <ListCard data={data} />
+            <Card>
+              <Card.Content>
+                <Card.Header>{data.title}</Card.Header>
+                <Card.Meta>{data.category}</Card.Meta>
+                <Card.Description>{data.description}</Card.Description>
+              </Card.Content>
+              <Card.Content extra>
+                <>
+                  <Button
+                    basic
+                    color="green"
+                    onClick={() => setIsEditOpen(true)}
+                  >
+                    Edit
+                  </Button>
+
+                  <Modal
+                    isOpen={isEditOpen}
+                    onClose={() => setIsEditOpen(false)}
+                  >
+                    <ModalOverlay />
+                    <ModalContent>
+                      <ModalHeader>Edit a note</ModalHeader>
+                      <ModalCloseButton />
+                      <ModalBody pb={6}>
+                        <FormControl>
+                          <FormLabel>Title</FormLabel>
+                          <Input
+                            placeholder="Enter title"
+                            value={edittitle}
+                            onChange={(e) => setEditTitle(e.target.value)}
+                          />
+                        </FormControl>
+
+                        <FormControl mt={4}>
+                          <FormLabel>Category</FormLabel>
+                          <Select
+                            placeholder="Choose category"
+                            options={filterOptions}
+                            value={editcategory}
+                            onChange={(e, { value }) => setEditCategory(value)}
+                          />
+                        </FormControl>
+                      </ModalBody>
+                      <ModalBody>
+                        <FormControl mt={0}>
+                          <FormLabel>Description</FormLabel>
+                          <Input
+                            placeholder="Enter description"
+                            value={editdescription}
+                            onChange={(e) => setEditDescription(e.target.value)}
+                          />
+                        </FormControl>
+                      </ModalBody>
+                      <ModalFooter>
+                        <Button mr={3} onClick={() => setIsEditOpen(false)}>
+                          Save
+                        </Button>
+                        <Button
+                          color="red"
+                          onClick={() => setIsEditOpen(false)}
+                          basic
+                        >
+                          Cancel
+                        </Button>
+                      </ModalFooter>
+                    </ModalContent>
+                  </Modal>
+                </>
+
+                <>
+                  <Button
+                    basic
+                    color="red"
+                    onClick={() => {
+                      setIsDeleteOpen(true);
+                    }}
+                  >
+                    Delete
+                  </Button>
+
+                  <AlertDialog isOpen={isDEleteOpen}>
+                    <AlertDialogOverlay>
+                      <AlertDialogContent>
+                        <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                          Delete a note
+                        </AlertDialogHeader>
+
+                        <AlertDialogBody>
+                          Are you sure? You can't undo this action afterwards.
+                        </AlertDialogBody>
+
+                        <AlertDialogFooter>
+                          <Button
+                            basic
+                            color="green"
+                            onClick={() => {
+                              setIsDeleteOpen(false);
+                            }}
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            basic
+                            color="red"
+                            onClick={() => {
+                              setIsDeleteOpen(false);
+                            }}
+                            ml={3}
+                          >
+                            Delete
+                          </Button>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialogOverlay>
+                  </AlertDialog>
+                </>
+              </Card.Content>
+            </Card>
           </GridColumn>
         ))}
       </Grid>
-      <Pagination/>
+      <Pagination />
     </div>
   );
 };
