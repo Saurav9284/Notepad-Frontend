@@ -116,6 +116,55 @@ const Home = () => {
       });
   };
 
+  const handleNoteDelete = (noteId) => {
+    const token = sessionStorage.getItem("Token");
+
+    fetch(`https://notepad-backend-production.up.railway.app/note/delete/${noteId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "content-type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.message === "Note delted Successfully") {
+          toast({
+            position: "top",
+            title: res.message,
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          });
+
+          setData((prevData) => prevData.filter((note) => note._id !== noteId));
+
+          setIsDeleteOpen(false);
+        } else {
+          toast({
+            position: "top",
+            title: res.message || "Not Deleted",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+          setIsDeleteOpen(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        toast({
+          position: "top",
+          title: "An error occurred during Deletion",
+          status: "warning",
+          duration: 5000,
+          isClosable: true,
+        });
+        setIsDeleteOpen(false);
+      });
+  };
+
+
   
   const submitUpdate = (noteId) => {
     console.log(noteId)
@@ -411,9 +460,7 @@ const Home = () => {
                           </Button>
                           <Button
                             color="red"
-                            onClick={() => {
-                              setIsDeleteOpen(false);
-                            }}
+                            onClick={() => handleNoteDelete(note._id)}
                             ml={3}
                           >
                             Delete
