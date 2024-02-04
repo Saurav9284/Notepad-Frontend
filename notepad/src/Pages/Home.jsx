@@ -116,6 +116,75 @@ const Home = () => {
       });
   };
 
+  
+  const submitUpdate = (noteId) => {
+    console.log(noteId)
+    const payload = JSON.stringify({
+      title: edittitle,
+      category: editcategory,
+      description: editdescription,
+    });
+    const token = sessionStorage.getItem("Token");
+  
+    fetch(`https://notepad-backend-production.up.railway.app/note/edit/${noteId}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "content-type": "application/json",
+      },
+      body: payload,
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.message === "Note Updated Successfully") {
+          toast({
+            position: "top",
+            title: res.message,
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          });
+  
+          // Update the state with the modified data
+          setData((prevData) =>
+            prevData.map((note) =>
+              note._id === noteId
+                ? {
+                    ...note,
+                    title: edittitle,
+                    category: editcategory,
+                    description: editdescription,
+                  }
+                : note
+            )
+          );
+  
+          setIsEditOpen(false);
+        } else {
+          toast({
+            position: "top",
+            title: res.message || "Not Updated",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+          setIsEditOpen(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        toast({
+          position: "top",
+          title: "An error occurred during Update",
+          status: "warning",
+          duration: 5000,
+          isClosable: true,
+        });
+        setIsEditOpen(false);
+      });
+  };
+  
+
   const sortOptions = [
     { key: "", value: "", text: "Select" },
     { key: "asc", value: "asc", text: "Ascending Order" },
@@ -152,6 +221,14 @@ const Home = () => {
         ))}
       </div>
     );
+  };
+
+  const handleNoteClick = (note) => {
+    setEditTitle(note.title);
+    setEditCategory(note.category);
+    setEditDescription(note.description);
+
+    setIsEditOpen(true);
   };
 
   useEffect(() => {
@@ -229,20 +306,20 @@ const Home = () => {
         </MenuItem>
       </Menu>
       <Grid columns={4} className="girdcard">
-        {data?.map((data) => (
-          <GridColumn key={data.id}>
+        {data?.map((note) => (
+          <GridColumn key={note._id}>
             <Card>
               <Card.Content>
-                <Card.Header>{data.title}</Card.Header>
-                <Card.Meta>{data.category}</Card.Meta>
-                <Card.Description>{data.description}</Card.Description>
+                <Card.Header>{note.title}</Card.Header>
+                <Card.Meta>{note.category}</Card.Meta>
+                <Card.Description>{note.description}</Card.Description>
               </Card.Content>
               <Card.Content extra>
                 <>
                   <Button
                     basic
                     color="green"
-                    onClick={() => setIsEditOpen(true)}
+                    onClick={() => handleNoteClick(note)}
                   >
                     Edit
                   </Button>
@@ -286,7 +363,7 @@ const Home = () => {
                         </FormControl>
                       </ModalBody>
                       <ModalFooter>
-                        <Button mr={3} onClick={() => setIsEditOpen(false)}>
+                        <Button mr={3} onClick={() => submitUpdate(note._id)}>
                           Save
                         </Button>
                         <Button
@@ -300,9 +377,8 @@ const Home = () => {
                     </ModalContent>
                   </Modal>
                 </>
-
                 <>
-                  <Button
+                <Button
                     basic
                     color="red"
                     onClick={() => {
@@ -334,7 +410,6 @@ const Home = () => {
                             Cancel
                           </Button>
                           <Button
-                    
                             color="red"
                             onClick={() => {
                               setIsDeleteOpen(false);
