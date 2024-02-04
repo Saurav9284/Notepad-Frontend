@@ -191,7 +191,7 @@ const Home = () => {
                   <FormControl mt={0}>
                     <FormLabel>Description</FormLabel>
                     <Input
-                      placeholder="Enter title"
+                      placeholder="Enter description"
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                     />
