@@ -334,7 +334,7 @@ const Home = () => {
                             Cancel
                           </Button>
                           <Button
-                            basic
+                    
                             color="red"
                             onClick={() => {
                               setIsDeleteOpen(false);
