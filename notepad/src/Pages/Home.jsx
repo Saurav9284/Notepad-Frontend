@@ -38,6 +38,7 @@ const Home = () => {
   const [data, setData] = useState([]);
   const [pages, setPages] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedNote, setSelectedNote] = useState(null);
 
   const getData = async (page = 1) => {
     const token = sessionStorage.getItem("Token");
@@ -128,7 +129,7 @@ const Home = () => {
     })
       .then((res) => res.json())
       .then((res) => {
-        if (res.message === "Note delted Successfully") {
+        if (res.message === "Note deleted Successfully") {
           toast({
             position: "top",
             title: res.message,
@@ -164,17 +165,14 @@ const Home = () => {
       });
   };
 
-
-  
   const submitUpdate = (noteId) => {
-    console.log(noteId)
     const payload = JSON.stringify({
       title: edittitle,
       category: editcategory,
       description: editdescription,
     });
     const token = sessionStorage.getItem("Token");
-  
+
     fetch(`https://notepad-backend-production.up.railway.app/note/edit/${noteId}`, {
       method: "PATCH",
       headers: {
@@ -193,7 +191,7 @@ const Home = () => {
             duration: 5000,
             isClosable: true,
           });
-  
+
           // Update the state with the modified data
           setData((prevData) =>
             prevData.map((note) =>
@@ -207,7 +205,7 @@ const Home = () => {
                 : note
             )
           );
-  
+
           setIsEditOpen(false);
         } else {
           toast({
@@ -232,7 +230,6 @@ const Home = () => {
         setIsEditOpen(false);
       });
   };
-  
 
   const sortOptions = [
     { key: "", value: "", text: "Select" },
@@ -278,6 +275,7 @@ const Home = () => {
     setEditDescription(note.description);
 
     setIsEditOpen(true);
+    setSelectedNote(note); // Set the selected note when opening the edit modal
   };
 
   useEffect(() => {
@@ -412,7 +410,7 @@ const Home = () => {
                         </FormControl>
                       </ModalBody>
                       <ModalFooter>
-                        <Button mr={3} onClick={() => submitUpdate(note._id)}>
+                        <Button mr={3} onClick={() => submitUpdate(selectedNote?._id)}>
                           Save
                         </Button>
                         <Button
@@ -427,12 +425,10 @@ const Home = () => {
                   </Modal>
                 </>
                 <>
-                <Button
+                  <Button
                     basic
                     color="red"
-                    onClick={() => {
-                      setIsDeleteOpen(true);
-                    }}
+                    onClick={() => setIsDeleteOpen(true)}
                   >
                     Delete
                   </Button>
@@ -460,7 +456,7 @@ const Home = () => {
                           </Button>
                           <Button
                             color="red"
-                            onClick={() => handleNoteDelete(note._id)}
+                            onClick={() => handleNoteDelete(selectedNote?._id)}
                             ml={3}
                           >
                             Delete
