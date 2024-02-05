@@ -44,7 +44,7 @@ const Home = () => {
     const token = sessionStorage.getItem("Token");
     try {
       const res = await axios.get(
-        `https://notepad-backend-production.up.railway.app/note/?page=${page}`,
+        `https://notepad-backend-production.up.railway.app/note/?page=${page}&sort=title&order=${sortOrder}&category=${selectedCategory}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -69,6 +69,9 @@ const Home = () => {
   const [isOpen, setIsCreateOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+
+  const [sortOrder, setSortOrder] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
 
   const submitAdd = () => {
     const payload = JSON.stringify({ title, category, description });
@@ -300,19 +303,29 @@ const Home = () => {
 
   useEffect(() => {
     getData();
-  }, [currentPage]);
+  }, [currentPage, sortOrder, selectedCategory]);
 
   return (
     <div className="homeOperation">
       <Menu secondary>
         <MenuItem>
-          <Select placeholder="Sort by title" options={sortOptions} />
+          <Select
+            placeholder="Sort by title"
+            options={sortOptions}
+            value={sortOrder}
+            onChange={(e, { value }) => setSortOrder(value)}
+          />
         </MenuItem>
         <MenuItem>
           <Input icon="search" placeholder="Search notes..." />
         </MenuItem>
         <MenuItem>
-          <Select placeholder="Filter by category" options={filterOptions} />
+          <Select
+            placeholder="Filter by category"
+            options={filterOptions}
+            value={selectedCategory}
+            onChange={(e, { value }) => setSelectedCategory(value)}
+          />
         </MenuItem>
         <MenuItem>
           <>
