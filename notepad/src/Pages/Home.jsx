@@ -291,14 +291,14 @@ const Home = () => {
   };
 
   const handleNoteClick = (note) => {
-    console.log("Clicked note:", note); // Debugging log
+    // console.log("Clicked note:", note); 
 
     setEditTitle(note.title);
     setEditCategory(note.category);
     setEditDescription(note.description);
 
     setIsEditOpen(true);
-    setSelectedNote(note); // Set the selected note when opening the edit modal
+    setSelectedNote(note); 
   };
 
   useEffect(() => {
