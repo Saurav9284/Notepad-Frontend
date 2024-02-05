@@ -68,9 +68,9 @@ const Home = () => {
 
   const [isOpen, setIsCreateOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [isDEleteOpen, setIsDeleteOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-  const submitadd = () => {
+  const submitAdd = () => {
     const payload = JSON.stringify({ title, category, description });
     const token = sessionStorage.getItem("Token");
     fetch("https://notepad-backend-production.up.railway.app/note/create", {
@@ -117,19 +117,29 @@ const Home = () => {
       });
   };
 
-  const handleNoteDelete = (noteId) => {
+  const handleNoteDelete = () => {
+    if (!selectedNote) {
+      console.error("Selected note is null or undefined");
+      setIsDeleteOpen(false);
+      return;
+    }
+
+    const noteId = selectedNote._id;
     const token = sessionStorage.getItem("Token");
 
-    fetch(`https://notepad-backend-production.up.railway.app/note/delete/${noteId}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "content-type": "application/json",
-      },
-    })
+    fetch(
+      `https://notepad-backend-production.up.railway.app/note/delete/${noteId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "content-type": "application/json",
+        },
+      }
+    )
       .then((res) => res.json())
       .then((res) => {
-        if (res.message === "Note deleted Successfully") {
+        if (res.message === 'Note delted Successfully') {
           toast({
             position: "top",
             title: res.message,
@@ -139,7 +149,6 @@ const Home = () => {
           });
 
           setData((prevData) => prevData.filter((note) => note._id !== noteId));
-
           setIsDeleteOpen(false);
         } else {
           toast({
@@ -165,7 +174,14 @@ const Home = () => {
       });
   };
 
-  const submitUpdate = (noteId) => {
+  const submitUpdate = () => {
+    if (!selectedNote) {
+      console.error("Selected note is null or undefined");
+      setIsEditOpen(false);
+      return;
+    }
+
+    const noteId = selectedNote._id;
     const payload = JSON.stringify({
       title: edittitle,
       category: editcategory,
@@ -173,14 +189,17 @@ const Home = () => {
     });
     const token = sessionStorage.getItem("Token");
 
-    fetch(`https://notepad-backend-production.up.railway.app/note/edit/${noteId}`, {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "content-type": "application/json",
-      },
-      body: payload,
-    })
+    fetch(
+      `https://notepad-backend-production.up.railway.app/note/edit/${noteId}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "content-type": "application/json",
+        },
+        body: payload,
+      }
+    )
       .then((res) => res.json())
       .then((res) => {
         if (res.message === "Note Updated Successfully") {
@@ -192,7 +211,6 @@ const Home = () => {
             isClosable: true,
           });
 
-          // Update the state with the modified data
           setData((prevData) =>
             prevData.map((note) =>
               note._id === noteId
@@ -219,7 +237,7 @@ const Home = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        console.error("Error during update:", err);
         toast({
           position: "top",
           title: "An error occurred during Update",
@@ -270,6 +288,8 @@ const Home = () => {
   };
 
   const handleNoteClick = (note) => {
+    console.log("Clicked note:", note); // Debugging log
+
     setEditTitle(note.title);
     setEditCategory(note.category);
     setEditDescription(note.description);
@@ -336,7 +356,7 @@ const Home = () => {
                   </FormControl>
                 </ModalBody>
                 <ModalFooter>
-                  <Button mr={3} onClick={submitadd}>
+                  <Button mr={3} onClick={submitAdd}>
                     Save
                   </Button>
                   <Button
@@ -410,7 +430,7 @@ const Home = () => {
                         </FormControl>
                       </ModalBody>
                       <ModalFooter>
-                        <Button mr={3} onClick={() => submitUpdate(selectedNote?._id)}>
+                        <Button mr={3} onClick={submitUpdate}>
                           Save
                         </Button>
                         <Button
@@ -428,12 +448,16 @@ const Home = () => {
                   <Button
                     basic
                     color="red"
-                    onClick={() => setIsDeleteOpen(true)}
+                    onClick={() => {
+                      setIsDeleteOpen(true);
+                      handleNoteClick(note);
+                      setIsEditOpen(false);
+                    }}
                   >
                     Delete
                   </Button>
 
-                  <AlertDialog isOpen={isDEleteOpen}>
+                  <AlertDialog isOpen={isDeleteOpen}>
                     <AlertDialogOverlay>
                       <AlertDialogContent>
                         <AlertDialogHeader fontSize="lg" fontWeight="bold">
@@ -454,11 +478,7 @@ const Home = () => {
                           >
                             Cancel
                           </Button>
-                          <Button
-                            color="red"
-                            onClick={() => handleNoteDelete(selectedNote?._id)}
-                            ml={3}
-                          >
+                          <Button color="red" onClick={handleNoteDelete} ml={3}>
                             Delete
                           </Button>
                         </AlertDialogFooter>
