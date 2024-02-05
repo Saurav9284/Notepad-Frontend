@@ -7,7 +7,6 @@ import {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
-  AlertDialogCloseButton,
 } from "@chakra-ui/react";
 import {
   Menu,
@@ -40,25 +39,6 @@ const Home = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedNote, setSelectedNote] = useState(null);
 
-  const getData = async (page = 1) => {
-    const token = sessionStorage.getItem("Token");
-    try {
-      const res = await axios.get(
-        `https://notepad-backend-production.up.railway.app/note/?page=${page}&sort=title&order=${sortOrder}&category=${selectedCategory}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      setPages(res.data.totalPages);
-      setData(res.data.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const [title, setTitle] = useState("");
   const [edittitle, setEditTitle] = useState("");
   const [category, setCategory] = useState("");
@@ -72,6 +52,48 @@ const Home = () => {
 
   const [sortOrder, setSortOrder] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+
+
+  // GET DATA
+
+  const getData = async (page = 1) => {
+    const token = sessionStorage.getItem("Token");
+    try {
+      // API URL
+      let apiUrl = `https://notepad-backend-production.up.railway.app/note/?page=${page}`;
+  
+      //sorting
+      if (sortOrder) {
+        apiUrl += `&sort=title&order=${sortOrder}`;
+      }
+  
+      //filter
+      if (selectedCategory) {
+        apiUrl += `&category=${selectedCategory}`;
+      }
+  
+      //search
+      if (searchTerm) {
+        apiUrl += `&title=${searchTerm}`;
+      }
+  
+      const res = await axios.get(apiUrl, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+  
+      setPages(res.data.totalPages);
+      setData(res.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
+
+  // CREATE NOTE
 
   const submitAdd = () => {
     const payload = JSON.stringify({ title, category, description });
@@ -120,6 +142,8 @@ const Home = () => {
       });
   };
 
+  // DELETE NOTE
+
   const handleNoteDelete = () => {
     if (!selectedNote) {
       console.error("Selected note is null or undefined");
@@ -142,7 +166,7 @@ const Home = () => {
     )
       .then((res) => res.json())
       .then((res) => {
-        if (res.message === 'Note delted Successfully') {
+        if (res.message === "Note delted Successfully") {
           toast({
             position: "top",
             title: res.message,
@@ -176,6 +200,9 @@ const Home = () => {
         setIsDeleteOpen(false);
       });
   };
+ 
+
+  // EDIT NOTE
 
   const submitUpdate = () => {
     if (!selectedNote) {
@@ -291,19 +318,20 @@ const Home = () => {
   };
 
   const handleNoteClick = (note) => {
-    // console.log("Clicked note:", note); 
+    // console.log("Clicked note:", note);
 
     setEditTitle(note.title);
     setEditCategory(note.category);
     setEditDescription(note.description);
 
     setIsEditOpen(true);
-    setSelectedNote(note); 
+    setSelectedNote(note);
   };
 
   useEffect(() => {
     getData();
-  }, [currentPage, sortOrder, selectedCategory]);
+  }, [currentPage, sortOrder, selectedCategory, searchTerm]);
+  
 
   return (
     <div className="homeOperation">
@@ -317,8 +345,14 @@ const Home = () => {
           />
         </MenuItem>
         <MenuItem>
-          <Input icon="search" placeholder="Search notes..." />
+          <Input
+            icon="search"
+            placeholder="Search notes..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </MenuItem>
+
         <MenuItem>
           <Select
             placeholder="Filter by category"
