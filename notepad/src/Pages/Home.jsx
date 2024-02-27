@@ -30,9 +30,12 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import axios from "axios";
+import Loading from "../Components/Loading";
 
 const Home = () => {
   const toast = useToast();
+
+  const [isLoading, setLoading] = useState(false);
 
   const [data, setData] = useState([]);
   const [pages, setPages] = useState("");
@@ -60,6 +63,7 @@ const Home = () => {
   const getData = async (page = 1) => {
     const token = sessionStorage.getItem("Token");
     try {
+      setLoading(true);
       // API URL
       let apiUrl = `https://notepad-backend-production.up.railway.app/note/?page=${page}`;
   
@@ -89,8 +93,11 @@ const Home = () => {
       setData(res.data.data);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false); 
     }
   };
+  
   
 
   // CREATE NOTE
@@ -335,6 +342,10 @@ const Home = () => {
 
   return (
     <div className="homeOperation">
+      {isLoading ? (
+      <Loading />
+     ) : (
+      <>
       <Menu secondary>
         <MenuItem>
           <Select
@@ -539,7 +550,8 @@ const Home = () => {
         ))}
       </Grid>
       <Pagination />
-    </div>
+      </>)}
+      </div>
   );
 };
 
