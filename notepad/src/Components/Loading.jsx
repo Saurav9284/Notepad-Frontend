@@ -1,6 +1,8 @@
 import React from 'react';
 import loader from '../Assests/loader.gif'
 
+// loading indicator
+
 const Loading = () => {
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
